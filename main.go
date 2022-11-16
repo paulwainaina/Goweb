@@ -29,8 +29,9 @@ func GetTripsData(wg *sync.WaitGroup) *processors.TripsData {
 	}
 	// Create a channel for trips with 1000 buffer
 	data.Trips = make(chan *processors.Trip, 1000)
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
+		
 		// Generate 10000000 trips
 		for i := 0; i < 10000000; i++ {
 			driver := data.Drivers[rand.Intn(len(data.Drivers))]
