@@ -52,12 +52,13 @@ func TestRetrieveData(t *testing.T) {
 	if data == nil {
 		t.Error(errors.New("data is invalid"))
 	}
-	data.Trips = make(chan *processors.Trip)
+	data.Trips = make(chan *processors.Trip,2)
 	wg := &sync.WaitGroup{}
 
 	//add trip
 	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		data.Trips <- &processors.Trip{
 			DriverId:     "57d9072e-8708-4d87-b5fd-4ea573e2e20b",
 			HotelId:      "ecf9ba5f-4770-44b4-a40d-fbdc0a3e987c",
@@ -88,8 +89,7 @@ func TestRetrieveData(t *testing.T) {
 			DriverRating: 9.0,
 			HotelRating:  3.5,
 		}
-		//close(data.Trips)
-		wg.Done()
+		//close(data.Trips)		
 	}()
 	//test top
 	processor := processors.CreateProcessorFromData(data, wg)

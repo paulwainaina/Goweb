@@ -13,18 +13,19 @@ import (
 type Processor struct {
 	data *TripsData
 	wg   *sync.WaitGroup
-	err  error
+	err error
 }
 
 var (
-	driverRanking *DriverRanking = NewDrivingRancking()
-	hotelRanking  *HotelRanking  = NewHotelRancking()
+	driverRanking DriverRanking =*NewDrivingRancking()
+	hotelRanking  HotelRanking  =*NewHotelRancking()
 )
 
 func NewProcessor(data *TripsData, wg *sync.WaitGroup) *Processor {
-	return &Processor{data: data, wg: wg, err: nil}
+	return &Processor{data: data, wg: wg}
 }
-func (p *Processor) Process() {
+func (p *Processor) ProcessFunc() {
+	p.err=nil
 	defer p.wg.Done()
 	x := 0
 	for {
@@ -60,7 +61,7 @@ func (p *Processor) Process() {
 		default:
 			{
 				//p.err = errors.New("default called")
-				goto exit
+				//goto exit
 			}
 		}
 	}
@@ -69,13 +70,13 @@ exit:
 
 func (p *Processor) StartProcessing() error {
 	p.wg.Add(1)
-	go p.Process()
-	p.wg.Wait()
+	go p.ProcessFunc()
+	p.wg.Wait()	
 	return p.err
 }
 func (p *Processor) GetTopRankedDriver() *DriverRanking {
-	return driverRanking
+	return &driverRanking
 }
 func (p *Processor) GetTopRankedHotel() *HotelRanking {
-	return hotelRanking
+	return &hotelRanking
 }
